@@ -1,0 +1,41 @@
+# =========================
+# Build artifacts
+# =========================
+/build/
+*.o
+*.obj
+*.a
+*.so
+*.exe
+*.dll
+
+# =========================
+# CMake files
+# =========================
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.dir
+
+# =========================
+# IDE / editor files
+# =========================
+*.idea/
+*.vscode/
+*.sublime-project
+*.sublime-workspace
+*.user
+*.swp
+
+# =========================
+# OS generated files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Data files (optional)
+# =========================
+data/
+tasks.txt
