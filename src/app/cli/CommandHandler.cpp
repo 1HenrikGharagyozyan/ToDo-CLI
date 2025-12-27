@@ -1,27 +1,30 @@
 #include "CommandHandler.h"
 #include <iostream>
+#include <algorithm>
 
 static const std::string DATA_FILE = "tasks.txt";
 
-static Priority parsePriority(const std::string& str)
+static Priority parsePriority(const std::string &str)
 {
-    if (str == "low")
+    std::string lower = str;
+    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+    if (lower == "low")
         return Priority::LOW;
-    if (str == "medium")
+    if (lower == "medium")
         return Priority::MEDIUM;
-    if (str == "high")
+    if (lower == "high")
         return Priority::HIGH;
     throw std::invalid_argument("Invalid priority: " + str);
 }
 
-CommandHandler::CommandHandler(TaskManager& manager)
+CommandHandler::CommandHandler(TaskManager &manager)
     : _manager(manager)
 {
     // Load tasks from file on initialization
     _manager.loadFromFile(DATA_FILE);
 }
 
-int CommandHandler::handle(const Command& cmd)
+int CommandHandler::handle(const Command &cmd)
 {
     if (cmd.name == "add")
         return handleAdd(cmd);
@@ -35,7 +38,7 @@ int CommandHandler::handle(const Command& cmd)
     return handleHelp();
 }
 
-int CommandHandler::handleAdd(const Command& cmd)
+int CommandHandler::handleAdd(const Command &cmd)
 {
     if (cmd.args.size() < 3)
     {
@@ -46,12 +49,11 @@ int CommandHandler::handleAdd(const Command& cmd)
     int id = _manager.listTasks().size() + 1;
 
     Task task(
-        id, 
+        id,
         cmd.args[0],
         parsePriority(cmd.args[1]),
         cmd.args[2],
-        Status::PENDING
-    );
+        Status::PENDING);
 
     _manager.addTask(task);
     _manager.saveToFile(DATA_FILE);
@@ -61,12 +63,12 @@ int CommandHandler::handleAdd(const Command& cmd)
 
 int CommandHandler::handleList()
 {
-    for (const auto& task : _manager.listTasks())
+    for (const auto &task : _manager.listTasks())
         std::cout << task.toString() << "\n";
     return 0;
 }
 
-int CommandHandler::handleDone(const Command& cmd)
+int CommandHandler::handleDone(const Command &cmd)
 {
     if (cmd.args.size() < 1)
     {
@@ -75,7 +77,7 @@ int CommandHandler::handleDone(const Command& cmd)
     }
 
     int taskId = std::stoi(cmd.args[0]);
-    Task* task = _manager.findTask(taskId);
+    Task *task = _manager.findTask(taskId);
     if (!task)
     {
         std::cerr << "Task not found: " << taskId << "\n";
@@ -88,7 +90,7 @@ int CommandHandler::handleDone(const Command& cmd)
     return 0;
 }
 
-int CommandHandler::handleRemove(const Command& cmd)
+int CommandHandler::handleRemove(const Command &cmd)
 {
     if (cmd.args.size() != 1)
     {
@@ -110,12 +112,12 @@ int CommandHandler::handleRemove(const Command& cmd)
 
 int CommandHandler::handleHelp()
 {
-    std::cout <<
-        "ToDo CLI\n"
-        "Commands:\n"
-        "  add <desc> <priority> <deadline>\n"
-        "  list\n"
-        "  done <id>\n"
-        "  remove <id>\n";
+    std::cout << "ToDo CLI\n"
+                 "Commands:\n"
+                 "  add <desc> <priority> <deadline>\n"
+                 "  priority: low, medium, high (case insensitive)\n"
+                 "  list\n"
+                 "  done <id>\n"
+                 "  remove <id>\n";
     return 0;
 }

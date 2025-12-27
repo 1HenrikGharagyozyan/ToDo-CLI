@@ -11,10 +11,10 @@ public:
 
     // Work with tasks
     void addTask(const Task& task);
-    bool removeTask(int id);
-    Task* findTask(int id); // Returns pointer to task or nullptr if not found
+    bool removeTask(const std::string& id);
+    Task* findTask(const std::string& id); // Returns pointer to task or nullptr if not found
 
-    std::vector<Task> listTasks() const;
+    const std::vector<Task>& listTasks() const;
     std::vector<Task> listTasksByStatus(Status status) const;
     void sortTasksByPriority();
 

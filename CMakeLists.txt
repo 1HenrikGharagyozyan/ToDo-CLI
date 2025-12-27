@@ -12,6 +12,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
 # =========================
 # Core library
 # =========================
@@ -27,12 +30,31 @@ target_include_directories(todo_core
         ${PROJECT_SOURCE_DIR}/src
 )
 
+
 target_compile_options(todo_core
     PRIVATE
         -Wall
         -Wextra
         -Wpedantic
 )
+
+# =========================
+# Dependencies
+# =========================
+include(FetchContent)
+
+FetchContent_Declare(
+    nlohmann_json
+    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+)
+
+FetchContent_MakeAvailable(nlohmann_json)
+
+target_link_libraries(todo_core
+    PUBLIC
+        nlohmann_json::nlohmann_json
+)
+
 
 # =========================
 # CLI executable

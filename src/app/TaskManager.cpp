@@ -1,6 +1,4 @@
-#include <fstream>
 #include <algorithm>
-#include <iostream>
 
 #include "TaskManager.h"
 #include "utils/FileHandler.h"
@@ -12,7 +10,7 @@ void TaskManager::addTask(const Task& task)
 }
 
 // Remove a task by ID
-bool TaskManager::removeTask(int id)
+bool TaskManager::removeTask(const std::string& id)
 {
     auto it = std::remove_if(tasks.begin(), tasks.end(), 
         [id](const Task& t)
@@ -29,7 +27,7 @@ bool TaskManager::removeTask(int id)
 }
 
 // Find a task by ID
-Task* TaskManager::findTask(int id)
+Task* TaskManager::findTask(const std::string& id)
 {
     for (auto& task : tasks)
     {
@@ -40,7 +38,7 @@ Task* TaskManager::findTask(int id)
 }
 
 // List all tasks
-std::vector<Task> TaskManager::listTasks() const
+const std::vector<Task>& TaskManager::listTasks() const
 {
     return tasks;
 }
