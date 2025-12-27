@@ -1,14 +1,15 @@
 #include "../src/app/Task.h"
-
+#include "../src/app/utils/Uuid.h"
 #include <cassert>
 #include <iostream>
 
 int main() 
 {
-    Task t(1, "Learn Linux", Priority::HIGH, "2025-12-25", Status::PENDING);
+    std::string id = generateUuid();
+    Task t(id, "Learn Linux", Priority::HIGH, "2025-12-25", Status::PENDING);
 
     // Проверка геттеров
-    assert(t.getId() == 1);
+    assert(t.getId() == id);
     assert(t.getDescription() == "Learn Linux");
     assert(t.getPriority() == Priority::HIGH);
     assert(t.getDeadline() == "2025-12-25");

@@ -1,8 +1,11 @@
 #include "CommandHandler.h"
+
 #include <iostream>
 #include <algorithm>
 
-static const std::string DATA_FILE = "tasks.txt";
+#include "../utils/Uuid.h"
+
+static const std::string DATA_FILE = "data/tasks.json";
 
 static Priority parsePriority(const std::string &str)
 {
@@ -46,7 +49,7 @@ int CommandHandler::handleAdd(const Command &cmd)
         return -1;
     }
 
-    int id = _manager.listTasks().size() + 1;
+    std::string id = generateUuid();
 
     Task task(
         id,
@@ -76,7 +79,7 @@ int CommandHandler::handleDone(const Command &cmd)
         return 1;
     }
 
-    int taskId = std::stoi(cmd.args[0]);
+    std::string taskId = cmd.args[0];
     Task *task = _manager.findTask(taskId);
     if (!task)
     {
@@ -98,7 +101,7 @@ int CommandHandler::handleRemove(const Command &cmd)
         return 1;
     }
 
-    int taskId = std::stoi(cmd.args[0]);
+    std::string taskId = cmd.args[0];
     if (!_manager.removeTask(taskId))
     {
         std::cerr << "Task not found: " << taskId << "\n";

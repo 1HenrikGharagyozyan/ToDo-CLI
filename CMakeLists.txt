@@ -23,6 +23,7 @@ add_library(todo_core
     src/app/TaskManager.cpp
     src/app/utils/FileHandler.cpp
     src/app/utils/Parser.cpp
+    src/app/utils/Uuid.cpp
 )
 
 target_include_directories(todo_core
