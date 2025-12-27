@@ -13,7 +13,7 @@ public:
 
 private:
     int handleAdd(const Command& cmd);
-    int handleList();
+    int handleList(const Command& cmd);
     int handleDone(const Command& cmd);
     int handleRemove(const Command& cmd);
     int handleHelp();

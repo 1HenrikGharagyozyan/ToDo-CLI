@@ -1,5 +1,6 @@
 #include "Task.h"
 #include <stdexcept>
+#include <iomanip>
 #include <vector>
 #include <sstream>
 
@@ -7,30 +8,26 @@
 
 using json = nlohmann::json;
 
-// Конструктор
-Task::Task(const std::string& id, const std::string& desc, Priority prio, const std::string& dl, Status st)
-    : _id(id)
-    , _description(desc)
-    , _priority(prio)
-    , _deadline(dl)
-    , _status(st)
+// Constructor
+Task::Task(const std::string &id, const std::string &desc, Priority prio, const std::string &dl, Status st)
+    : _id(id), _description(desc), _priority(prio), _deadline(dl), _status(st)
 {
 }
 
-// Геттеры
+// Getters
 std::string Task::getId() const { return _id; }
 std::string Task::getDescription() const { return _description; }
 Priority Task::getPriority() const { return _priority; }
 std::string Task::getDeadline() const { return _deadline; }
 Status Task::getStatus() const { return _status; }
 
-// Сеттеры
+// Setters
 void Task::setDescription(const std::string &desc) { _description = desc; }
 void Task::setPriority(Priority prio) { _priority = prio; }
 void Task::setDeadline(const std::string &dl) { _deadline = dl; }
 void Task::setStatus(Status st) { _status = st; }
 
-// Конвертация enum <-> string
+// Enum <-> string conversion
 std::string Task::priorityToString(Priority p)
 {
     switch (p)
@@ -70,33 +67,31 @@ Status Task::stringToStatus(const std::string &str)
     throw std::invalid_argument("Invalid status string");
 }
 
-// Цветной вывод
+// Colored output
 std::string Task::toString() const
 {
-    std::string color;
-    switch (_priority)
-    {
-    case Priority::LOW:
-        color = TerminalColors::GREEN;
-        break;
-    case Priority::MEDIUM:
-        color = TerminalColors::YELLOW;
-        break;
-    case Priority::HIGH:
-        color = TerminalColors::RED;
-        break;
-    }
-    std::ostringstream oss;
-    oss << color << "[" << _id << "] "
-        << _description << " | "
-        << priorityToString(_priority) << " | "
-        << _deadline << " | "
-        << statusToString(_status)
-        << TerminalColors::RESET;
-    return oss.str();
+    std::ostringstream out;
+
+    std::string prioStr = priorityToString(_priority);
+    std::string statusStr = statusToString(_status);
+
+    std::string prioColor =
+        (_priority == Priority::HIGH) ? RED :
+        (_priority == Priority::MEDIUM) ? YELLOW : GREEN;
+
+    std::string statusColor =
+        (_status == Status::DONE) ? GREEN : CYAN;
+
+    out << prioColor << std::setw(8) << prioStr << RESET << " "
+        << statusColor << std::setw(8) << statusStr << RESET << " "
+        << std::setw(25) << std::left << _description << " "
+        << _deadline;
+
+    return out.str();
 }
 
-// Сериализация в строку для файла
+
+// Serialization to string for file
 std::string Task::serialize() const
 {
     std::ostringstream oss;
@@ -107,7 +102,7 @@ std::string Task::serialize() const
     return oss.str();
 }
 
-// Десериализация из строки
+// Deserialization from string
 Task Task::deserialize(const std::string &line)
 {
     std::istringstream iss(line);
@@ -124,8 +119,7 @@ Task Task::deserialize(const std::string &line)
         parts[1],
         stringToPriority(parts[2]),
         parts[3],
-        stringToStatus(parts[4])
-    };
+        stringToStatus(parts[4])};
 }
 
 json Task::toJson() const
@@ -138,13 +132,12 @@ json Task::toJson() const
         {"status", statusToString(_status)}};
 }
 
-Task Task::fromJson(const json& j) 
+Task Task::fromJson(const json &j)
 {
     return Task{
         j.at("id").get<std::string>(),
         j.at("description").get<std::string>(),
         stringToPriority(j.at("priority").get<std::string>()),
         j.at("deadline").get<std::string>(),
-        stringToStatus(j.at("status").get<std::string>())
-    };  
+        stringToStatus(j.at("status").get<std::string>())};
 }

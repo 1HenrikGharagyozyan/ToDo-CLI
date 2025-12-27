@@ -7,6 +7,13 @@
 
 static const std::string DATA_FILE = "data/tasks.json";
 
+static Status parseStatusFlag(const std::string& flag)
+{
+    if (flag == "--done") return Status::DONE;
+    if (flag == "--pending") return Status::PENDING;
+    throw std::invalid_argument("Unknown status flag");
+}
+
 static Priority parsePriority(const std::string &str)
 {
     std::string lower = str;
@@ -27,12 +34,12 @@ CommandHandler::CommandHandler(TaskManager &manager)
     _manager.loadFromFile(DATA_FILE);
 }
 
-int CommandHandler::handle(const Command &cmd)
+int CommandHandler::handle(const Command& cmd)
 {
     if (cmd.name == "add")
         return handleAdd(cmd);
     else if (cmd.name == "list")
-        return handleList();
+        return handleList(cmd);
     else if (cmd.name == "done")
         return handleDone(cmd);
     else if (cmd.name == "remove")
@@ -64,10 +71,40 @@ int CommandHandler::handleAdd(const Command &cmd)
     return 0;
 }
 
-int CommandHandler::handleList()
+int CommandHandler::handleList(const Command& cmd)
 {
-    for (const auto &task : _manager.listTasks())
+    std::vector<Task> result = _manager.listTasks();
+
+    for (size_t i = 0; i < cmd.args.size(); ++i)
+    {
+        const std::string& arg = cmd.args[i];
+
+        if (arg == "--done" || arg == "--pending")
+        {
+            Status st = parseStatusFlag(arg);
+            result = _manager.listByStatus(st);
+        }
+        else if (arg == "--priority")
+        {
+            if (i + 1 >= cmd.args.size())
+                throw std::invalid_argument("Missing priority value");
+
+            Priority p = parsePriority(cmd.args[++i]);
+            result = _manager.listByPriority(p);
+        }
+        else if (arg == "--sort" && i + 1 < cmd.args.size())
+        {
+            if (cmd.args[i + 1] == "priority")
+            {
+                _manager.sortByPriority();
+                ++i;
+            }
+        }
+    }
+
+    for (const auto& task : result)
         std::cout << task.toString() << "\n";
+
     return 0;
 }
 

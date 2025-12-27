@@ -14,14 +14,17 @@ public:
     bool removeTask(const std::string& id);
     Task* findTask(const std::string& id); // Returns pointer to task or nullptr if not found
 
-    const std::vector<Task>& listTasks() const;
-    std::vector<Task> listTasksByStatus(Status status) const;
-    void sortTasksByPriority();
+    std::vector<Task> listTasks() const;
+
+    std::vector<Task> listByStatus(Status status) const;
+    std::vector<Task> listByPriority(Priority priority) const;
+
+    void sortByPriority();
 
     // File operations
     bool loadFromFile(const std::string& filepath);
     bool saveToFile(const std::string& filepath) const;
 
 private:
-    std::vector<Task> tasks;
+    std::vector<Task> _tasks;
 };

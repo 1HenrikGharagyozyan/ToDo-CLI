@@ -1,13 +1,17 @@
 #pragma once
 
-#include <string>
+// Reset
+#define RESET   "\033[0m"
 
-namespace TerminalColors 
-{
+// Regular colors
+#define BLACK   "\033[30m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN    "\033[36m"
+#define WHITE   "\033[37m"
 
-    const std::string RESET  = "\033[0m";
-    const std::string RED    = "\033[31m";
-    const std::string GREEN  = "\033[32m";
-    const std::string YELLOW = "\033[33m";
-
-}
+// Bold
+#define BOLD    "\033[1m"

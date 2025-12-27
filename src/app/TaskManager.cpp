@@ -4,32 +4,32 @@
 #include "utils/FileHandler.h"
 
 // Add a new task
-void TaskManager::addTask(const Task& task)
+void TaskManager::addTask(const Task &task)
 {
-    tasks.push_back(task);
+    _tasks.push_back(task);
 }
 
 // Remove a task by ID
-bool TaskManager::removeTask(const std::string& id)
+bool TaskManager::removeTask(const std::string &id)
 {
-    auto it = std::remove_if(tasks.begin(), tasks.end(), 
-        [id](const Task& t)
-        {
-            return t.getId() == id;
-        });
-    
-    if (it != tasks.end()) 
+    auto it = std::remove_if(_tasks.begin(), _tasks.end(),
+                             [id](const Task &t)
+                             {
+                                 return t.getId() == id;
+                             });
+
+    if (it != _tasks.end())
     {
-        tasks.erase(it, tasks.end());
+        _tasks.erase(it, _tasks.end());
         return true;
     }
     return false;
 }
 
 // Find a task by ID
-Task* TaskManager::findTask(const std::string& id)
+Task *TaskManager::findTask(const std::string &id)
 {
-    for (auto& task : tasks)
+    for (auto &task : _tasks)
     {
         if (task.getId() == id)
             return &task;
@@ -37,43 +37,52 @@ Task* TaskManager::findTask(const std::string& id)
     return nullptr;
 }
 
-// List all tasks
-const std::vector<Task>& TaskManager::listTasks() const
+std::vector<Task> TaskManager::listTasks() const
 {
-    return tasks;
+    return _tasks;
 }
 
-// filter tasks by status
-std::vector<Task> TaskManager::listTasksByStatus(Status status) const
+std::vector<Task> TaskManager::listByStatus(Status status) const
 {
-    std::vector<Task> filtered;
-    for (const auto& task : tasks)
+    std::vector<Task> result;
+    for (const auto &task : _tasks)
     {
         if (task.getStatus() == status)
-            filtered.push_back(task);
+            result.push_back(task);
     }
-    return filtered;
+    return result;
 }
 
-// Sort tasks by priority (High > Medium > Low)
-void TaskManager::sortTasksByPriority()
+std::vector<Task> TaskManager::listByPriority(Priority priority) const
 {
-    std::sort(tasks.begin(), tasks.end(),
-        [](const Task& a, const Task& b)
-        {
-            return static_cast<int>(a.getPriority()) > static_cast<int>(b.getPriority());
-        });
+    std::vector<Task> result;
+    for (const auto &task : _tasks)
+    {
+        if (task.getPriority() == priority)
+            result.push_back(task);
+    }
+    return result;
+}
+
+void TaskManager::sortByPriority()
+{
+    std::sort(_tasks.begin(), _tasks.end(),
+              [](const Task &a, const Task &b)
+              {
+                  return static_cast<int>(a.getPriority()) >
+                         static_cast<int>(b.getPriority());
+              });
 }
 
 // Load from file through FileHandler
-bool TaskManager::loadFromFile(const std::string& filepath) 
+bool TaskManager::loadFromFile(const std::string &filepath)
 {
-    tasks.clear();
-    return FileHandler::loadTasksFromFile(filepath, tasks);
+    _tasks.clear();
+    return FileHandler::loadTasksFromFile(filepath, _tasks);
 }
 
 // Save to file through FileHandler
-bool TaskManager::saveToFile(const std::string& filepath) const 
+bool TaskManager::saveToFile(const std::string &filepath) const
 {
-    return FileHandler::saveTasksToFile(filepath, tasks);
+    return FileHandler::saveTasksToFile(filepath, _tasks);
 }

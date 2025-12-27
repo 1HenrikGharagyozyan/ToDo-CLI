@@ -3,7 +3,7 @@
 #include <cassert>
 #include <iostream>
 
-int main() 
+int main()
 {
     TaskManager manager;
 
@@ -15,15 +15,15 @@ int main()
 
     assert(manager.listTasks().size() == 2);
 
-    // Проверка поиска
+    // Checking search
     assert(manager.findTask(t1.getId())->getDescription() == "Learn Linux");
     assert(manager.findTask("nonexistent") == nullptr);
 
-    // Удаление
+    // Deletion
     assert(manager.removeTask(t1.getId()) == true);
     assert(manager.listTasks().size() == 1);
 
-    // Сохранение и загрузка
+    // Saving and loading
     manager.saveToFile("test_tasks.json");
     TaskManager newManager;
     newManager.loadFromFile("test_tasks.json");
